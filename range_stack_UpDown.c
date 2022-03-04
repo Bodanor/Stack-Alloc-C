@@ -16,7 +16,8 @@ typedef struct stack
 }stack_t;
 
 
-short push(char *data, stack_t**ESP, stack_t *EBP);
+short push(char *data, stack_t**ESP, stack_t *EBP, int stacksize);
+short pop(stack_t **ESP, stack_t *EBP);
 short secureInput(char* str, int size_str);
 
 int main()
@@ -24,36 +25,46 @@ int main()
     stack_t *EBP = NULL;
     stack_t *ESP = NULL;
     char data[10];
-
+    char choice [5];
     printf("Allocating memory for the stack...\n");
 
-    EBP = (stack_t*)malloc(sizeof(stack_t)*10);
+    EBP = (stack_t*)malloc(sizeof(stack_t)*2);
     if (EBP == NULL)
     {
         printf("Error trying to alloc memory for the stack !\n");
         return -1;
     }
-    EBP = EBP + 9;
+    EBP = EBP + 1;
     ESP = EBP;
 
     while (1)
     {
+        printf("Push or Pop ? : ");
+        secureInput(choice, sizeof(choice));
+        if (strcmp(choice, "push") == 0 || strcmp(choice, "PUSH") == 0)
+        {
+            printf("Enter data : ");
+            secureInput(data, sizeof(data));
+            if (*data != '\0')
+                if(push(data, &ESP, EBP, 3) == -1)
+                    return -1;
+        }
+        else if (strcmp(choice, "pop") == 0 || strcmp(choice, "POP") == 0)
+        {
+            pop(&ESP, EBP);
+        }
+        
         printf("EBP : 0x%X\n", EBP);
-        printf("ESP : 0x%X\n", ESP);
-        printf("Enter data : ");
-        secureInput(data, sizeof(data));
-        push(data, &ESP, EBP);
-
-
+        printf("ESP : 0x%X\n", ESP);   
     }
 
 
 }
 
-short push(char *data, stack_t**ESP, stack_t *EBP)
+short push(char *data, stack_t**ESP, stack_t *EBP, int stack_size)
 {
-    stack_t *pstack = *(ESP)-1;
-    if (pstack != EBP -20)
+    stack_t *pstack = (*ESP)-1;
+    if (pstack != EBP - stack_size)
     {
          if (pstack != NULL)
         {
@@ -92,3 +103,11 @@ short secureInput(char* str, int size_str)
         return 1;
 }
 
+short pop(stack_t **ESP, stack_t *EBP)
+{
+    stack_t *pstack = *ESP;
+    if (pstack != EBP)
+    {
+        *ESP = (*ESP)->next_stack;
+    }
+}
