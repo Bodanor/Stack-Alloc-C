@@ -17,7 +17,7 @@ typedef struct stack
 
 
 short push(char *data, stack_t**ESP, stack_t *EBP, int stacksize);
-short pop(stack_t **ESP, stack_t *EBP);
+void pop(stack_t **ESP, stack_t *EBP);
 short secureInput(char* str, int size_str);
 
 int main()
@@ -103,7 +103,7 @@ short secureInput(char* str, int size_str)
         return 1;
 }
 
-short pop(stack_t **ESP, stack_t *EBP)
+void pop(stack_t **ESP, stack_t *EBP)
 {
     stack_t *pstack = *ESP;
     if (pstack != EBP)
