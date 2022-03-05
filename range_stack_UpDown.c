@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 /**
  * Le stack va de la plus haute adresse vers la plus basse (penser à sub esp <value>. On retire à esp pour stocker quelque chose)
@@ -45,18 +46,42 @@ int main()
 
     stack_t *EBP = NULL;
     stack_t *ESP = NULL;
-    char buffer[10];
+    char buffer[10] = {0};
     char choice [5];
     int running = 1;
+    int stack_size = 0;
+    int i;
+
+    while (stack_size == 0)
+    {
+        printf("Enter the stack size : ");
+        secureInput(buffer, sizeof(buffer));
+        for (i = 0; i < sizeof(buffer); i++)
+        {
+            if (buffer[i] != '\0' && !isdigit(buffer[i]))
+            {
+                printf("Bad stack size !\n");
+                i = sizeof(buffer);
+                stack_size = 1;
+            }
+        }
+        if (stack_size == 0)
+            stack_size = atoi(buffer);
+        else
+            stack_size = 0;
+    }
+
+
+
     printf("Allocating memory for the stack...\n");
 
-    EBP = (stack_t*)malloc(sizeof(stack_t)*2);
+    EBP = (stack_t*)malloc(sizeof(stack_t)*stack_size);
     if (EBP == NULL)
     {
         printf("Error trying to alloc memory for the stack !\n");
         return -1;
     }
-    EBP = EBP + 2;
+    EBP = EBP + stack_size;
     ESP = EBP;
 
     while (running)
@@ -68,7 +93,7 @@ int main()
             printf("Enter data : ");
             secureInput(buffer, sizeof(buffer));
             if (*buffer != '\0')
-                if(push(buffer, &ESP, EBP, 2) == -1)
+                if(push(buffer, &ESP, EBP, stack_size) == -1)
                     return -1;
         }
         else if (strcmp(choice, "pop") == 0 || strcmp(choice, "POP") == 0)
@@ -77,7 +102,7 @@ int main()
         }
         else if (strcmp(choice, "exit") == 0 || strcmp(choice, "EXIT") == 0)
         {
-            free_stack(EBP, 2);
+            free_stack(EBP, stack_size);
             running = 0;
         }
         printf("EBP : %p\n",(void*)EBP);
