@@ -45,7 +45,7 @@ int main()
 
     stack_t *EBP = NULL;
     stack_t *ESP = NULL;
-    char data[10];
+    char buffer[10];
     char choice [5];
     int running = 1;
     printf("Allocating memory for the stack...\n");
@@ -66,9 +66,9 @@ int main()
         if (strcmp(choice, "push") == 0 || strcmp(choice, "PUSH") == 0)
         {
             printf("Enter data : ");
-            secureInput(data, sizeof(data));
-            if (*data != '\0')
-                if(push(data, &ESP, EBP, 2) == -1)
+            secureInput(buffer, sizeof(buffer));
+            if (*buffer != '\0')
+                if(push(buffer, &ESP, EBP, 2) == -1)
                     return -1;
         }
         else if (strcmp(choice, "pop") == 0 || strcmp(choice, "POP") == 0)
