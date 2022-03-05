@@ -6,8 +6,28 @@
  * Le stack va de la plus haute adresse vers la plus basse (penser à sub esp <value>. On retire à esp pour stocker quelque chose)
  * Ici, j'ai défini ESP qui recoit le malloc de la mémoire, hors ca devrait être le contraire.. EBP EST LA BASE DONC l'ADDRESSE LA PLUS HAUTE.
  * Ce que je devrait faire ca serrait malloc EBP, Dire que EBP = EBP + le max, et dire ESP = EBP - max, ce qui echange les deux
- * Enfin pour savoir si le stack est plein je doit retirer des valeurs pour compar" au lieux d'augmenter !
+ * Enfin pour savoir si le stack est plein je doit retirer des valeurs pour comparé au lieux d'augmenter !
  * 
+ * EDIT : Ignorer ce commentaire, j'ai appliquer ce que j'avais dit que j'allais faire.
+ * Quand on démarre un programme, EBP et ESP on tout deux la même valeur (mov esp, ebp en assembleur). Comme je l'ai dit lorsque l'on push quelque
+ * Chose, ESP diminue en addresse :
+ *Addresse :  0:------ -> ESP (top de la pile)adresse 0
+ *            1:|    |
+ *            2:|    |
+ *            3:|    |   // EBP est toujours plus grand ou égal à ESP.
+ *            4:|    |
+ *            5:|    |
+ *            6:|    |
+ *            7:------   -> EBP (le plus bas de la pile)adresse 7
+ * 
+ *Addresse :  0:------
+ *            1:|    |
+ *            2:|    |
+ *            3:|    |   // Admettons q'un int c'est 1 octets, SI on décide de push la valeur 5, 
+ *            4:|    |   // Alors, on aura entre l'adresse 7 et 6 la valeur 5 et ESP 
+ *            5:|    |   // vaudra 6.
+ *            6:|    |
+ *            7:------  -> EBP et ESP on la même valeurs au debut d'un programme
  */
 typedef struct stack
 {
