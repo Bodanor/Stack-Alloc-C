@@ -35,17 +35,19 @@ typedef struct stack
     struct stack *next_stack;
 }stack_t;
 
-
 short push(char *data, stack_t**ESP, stack_t *EBP, int stacksize);
 void pop(stack_t **ESP, stack_t *EBP);
 short secureInput(char* str, int size_str);
+void free_stack(stack_t **ESP, stack_t *EBP, int stack_size);
 
 int main()
 {
+
     stack_t *EBP = NULL;
     stack_t *ESP = NULL;
     char data[10];
     char choice [5];
+    int running = 1;
     printf("Allocating memory for the stack...\n");
 
     EBP = (stack_t*)malloc(sizeof(stack_t)*2);
@@ -57,7 +59,7 @@ int main()
     EBP = EBP + 1;
     ESP = EBP;
 
-    while (1)
+    while (running)
     {
         printf("Push or Pop ? : ");
         secureInput(choice, sizeof(choice));
@@ -73,10 +75,15 @@ int main()
         {
             pop(&ESP, EBP);
         }
-        
-        printf("EBP : 0x%X\n", EBP);
-        printf("ESP : 0x%X\n", ESP);   
+        else if (strcmp(choice, "exit") == 0 || strcmp(choice, "EXIT") == 0)
+        {
+            free_stack(&ESP, EBP, 3);
+            running = 0;
+        }
+        printf("EBP : 0x%p\n",(void*)EBP);
+        printf("ESP : 0x%p\n", (void*)ESP);   
     }
+
 
 
 }
@@ -84,7 +91,7 @@ int main()
 short push(char *data, stack_t**ESP, stack_t *EBP, int stack_size)
 {
     stack_t *pstack = (*ESP)-1;
-    if (pstack != EBP - stack_size)
+    if (pstack != EBP + stack_size)
     {
          if (pstack != NULL)
         {
@@ -103,6 +110,7 @@ short push(char *data, stack_t**ESP, stack_t *EBP, int stack_size)
         printf("Stack is full !\n");
         return -2;
     }
+    return 0;
 
 }
 short secureInput(char* str, int size_str)
@@ -130,4 +138,15 @@ void pop(stack_t **ESP, stack_t *EBP)
     {
         *ESP = (*ESP)->next_stack;
     }
+}
+
+void free_stack(stack_t **ESP, stack_t *EBP, int stack_size)
+{
+    while (*ESP != EBP)
+    {
+        stack_t *pstack = *ESP;
+        *ESP = (*ESP)->next_stack;
+    }
+    free(*ESP - 1);
+
 }
